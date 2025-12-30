@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "../../../../lib/rateLimit";
+import prisma from "../../../../lib/prisma";
 
 type Point = { t: string; v: number };
 
@@ -38,8 +39,32 @@ export async function GET(
   if (!rl.allowed) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
-  const points = historyMock[symbol] ?? historyMock.OFICIAL;
 
+  try {
+    const rows = await prisma.history.findMany({
+      where: { symbol },
+      orderBy: { date: "asc" },
+      select: { date: true, value: true },
+    });
+    if (rows && rows.length > 0) {
+      const points = rows.map((r) => ({
+        t: r.date.toISOString().slice(0, 10),
+        v: Number(r.value),
+      }));
+      return NextResponse.json({
+        symbol,
+        currency: "ARS",
+        points,
+        source: "db",
+        updatedAt: new Date().toISOString(),
+      });
+    }
+  } catch (e) {
+    // fall back to mock on error
+    console.error("history read error", e);
+  }
+
+  const points = historyMock[symbol] ?? historyMock.OFICIAL;
   return NextResponse.json({
     symbol,
     currency: "ARS",

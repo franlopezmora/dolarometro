@@ -1,5 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 
+if (process.env.RUN_SEED !== "1") {
+  console.log("Seed disabled. Set RUN_SEED=1 to run the seed.");
+  process.exit(0);
+}
+
 async function main() {
   const prisma = new PrismaClient();
   const today = new Date();

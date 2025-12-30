@@ -18,8 +18,7 @@ function parseParams(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const identifier =
-    req.headers.get("x-forwarded-for")?.split(",")[0] ?? req.ip ?? "global";
+  const identifier = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "global";
   const rl = await rateLimit(identifier);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });

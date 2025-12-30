@@ -13,7 +13,11 @@ export async function getCache<T>(key: string): Promise<T | null> {
   try {
     const raw = await redisClient.get(key);
     if (!raw) return null;
-    return JSON.parse(raw) as T;
+    if (typeof raw === "string") {
+      return JSON.parse(raw) as T;
+    }
+    // already an object
+    return raw as unknown as T;
   } catch {
     return null;
   }

@@ -33,8 +33,7 @@ export async function GET(
 ) {
   const params = await context.params;
   const symbol = params?.symbol?.toUpperCase() ?? "OFICIAL";
-  const identifier =
-    _req.headers.get("x-forwarded-for")?.split(",")[0] ?? _req.ip ?? "global";
+  const identifier = _req.headers.get("x-forwarded-for")?.split(",")[0] ?? "global";
   const rl = await rateLimit(identifier);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });

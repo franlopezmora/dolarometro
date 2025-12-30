@@ -2,16 +2,27 @@
   "name": "dolarometro",
   "version": "0.1.0",
   "private": true,
+  "dependencies": {
+    "@prisma/client": "^5.11.0",
+    "@upstash/redis": "^1.36.0",
+    "mysql2": "^3.6.0",
+    "next": "16.1.1",
+    "pg": "^8.11.0",
+    "prisma": "^5.11.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.1.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "lint": "eslint",
+    "prisma": "prisma",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev --name init",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:seed": "node prisma/seed.js",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

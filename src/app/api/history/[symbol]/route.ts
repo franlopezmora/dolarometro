@@ -29,10 +29,12 @@ const historyMock: Record<string, Point[]> = {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { symbol?: string } },
+  context: { params: { symbol: string } | Promise<{ symbol: string }> },
 ) {
-  const symbol = params.symbol?.toUpperCase() ?? "OFICIAL";
-  const identifier = _req.headers.get("x-forwarded-for")?.split(",")[0] ?? _req.ip ?? "global";
+  const params = await context.params;
+  const symbol = params?.symbol?.toUpperCase() ?? "OFICIAL";
+  const identifier =
+    _req.headers.get("x-forwarded-for")?.split(",")[0] ?? _req.ip ?? "global";
   const rl = await rateLimit(identifier);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
